@@ -1,0 +1,20 @@
+#!/bin/sh
+# Simulates GitHub branch protection: blocks direct pushes to main/master.
+# Requires creating a PR instead. Bypass with: git push --no-verify (emergency only)
+
+protected_branches="main master"
+current_branch=$(git symbolic-ref HEAD 2>/dev/null | sed 's|refs/heads/||')
+
+while read local_ref local_sha remote_ref remote_sha; do
+  remote_branch=$(echo "$remote_ref" | sed 's|refs/heads/||')
+  for branch in $protected_branches; do
+    if [ "$remote_branch" = "$branch" ] && [ "$current_branch" = "$branch" ]; then
+      echo "BLOCKED: Direct push to '$branch' is not allowed."
+      echo "Create a feature branch and open a PR instead."
+      echo "Emergency bypass: git push --no-verify"
+      exit 1
+    fi
+  done
+done
+
+exit 0

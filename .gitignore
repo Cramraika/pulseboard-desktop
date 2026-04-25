@@ -1,0 +1,41 @@
+# pulseboard-desktop .gitignore — Windows + PowerShell + Wireshark/iperf3 captures
+# Adapted from the Cramraika OSS .gitignore convention (project-template / bulk).
+
+# ── User config (must NOT ship to repo; users copy config.example.ps1 → config.ps1) ──
+config.ps1
+
+# ── Run output (the script writes capture results into the cwd) ──
+NMDiag/
+diag-output/
+*.pcapng
+*.pcap
+
+# ── Claude Code workspace (per universal convention) ──
+.claude/settings.local.json
+.claude/agents/
+.claude/skills/
+.claude/commands/
+.mcp.json
+
+# ── Secrets — should never appear in this repo, but defence-in-depth ──
+.env
+.env.*
+*.key
+*.pem
+
+# ── PowerShell editor / IDE artifacts ──
+*.bak
+*.tmp
+*.swp
+*~
+PSScriptAnalyzerSettings.psd1.bak
+
+# ── OS junk ──
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ── Editors ──
+.vscode/
+.idea/
+*.iml

@@ -1,0 +1,46 @@
+# SYNTHETIC EXAMPLE — generated for documentation purposes. All IPs use
+# RFC 5737 TEST-NET-3 (203.0.113.0/24) or other reserved ranges; SSID and
+# server names are placeholders; timestamps are illustrative. No actual
+# capture from any real network is included in this repo.
+
+=== PREFLIGHT VALIDATION  (started: 2026-04-25T15:51:32.1558093+05:30) ===
+[PASS] tool: tshark.exe  found at C:\Program Files\Wireshark\tshark.exe
+[PASS] tool: iperf3.exe  found at C:\iperf3\iperf3.exe
+[PASS] tool: speedtest.exe  found at C:\Users\sample\AppData\Local\Microsoft\WinGet\Packages\Ookla.Speedtest.CLI_Microsoft.Winget.Source_8wekyb3d8bbwe\speedtest.exe
+[PASS] tool: pathping (built-in)  found (MTR fallback)
+[PASS] net: Wi-Fi adapter Up  Wi-Fi (Intel(R) Wi-Fi 6 AX201 160MHz)
+[PASS] icmp: ping cloudflare_dns (1.1.1.1)  avg=35ms
+[PASS] icmp: ping cloudflare_cdn (104.16.132.229)  avg=5.3ms
+[PASS] icmp: ping google_dns (8.8.8.8)  avg=3.7ms
+[PASS] icmp: ping google_api (142.250.193.100)  avg=4.3ms
+[PASS] icmp: ping microsoft_teams (13.107.42.14)  avg=4.7ms
+[PASS] tcp: 443 to cloudflare_dns (1.1.1.1)  connect=37ms
+[PASS] tcp: 443 to cloudflare_cdn (104.16.132.229)  connect=7ms
+[PASS] tcp: 443 to google_dns (8.8.8.8)  connect=8ms
+[PASS] tcp: 443 to google_api (142.250.193.100)  connect=5ms
+[PASS] tcp: 443 to microsoft_teams (13.107.42.14)  connect=5ms
+[PASS] dns: www.cloudflare.com via isp_default  104.16.124.96;104.16.123.96 in 2ms
+[PASS] dns: www.cloudflare.com via cloudflare  104.16.124.96;104.16.123.96 in 12ms
+[PASS] dns: www.cloudflare.com via google  104.16.124.96;104.16.123.96 in 15ms
+[PASS] dns: www.cloudflare.com via quad9  104.16.124.96;104.16.123.96 in 14ms
+[PASS] tls: cert fetch www.google.com  CN=WR2, O=Google Trust Services, C=US
+[PASS] tls: cert fetch www.cloudflare.com  CN=WE1, O=Google Trust Services, C=US
+[PASS] tls: cert fetch www.microsoft.com  CN=Microsoft Azure RSA TLS Issuing CA 04
+[PASS] sip: probe (skipped - no $SipTarget in config.ps1)  not configured
+[PASS] egress: public IP + CGNAT probe  203.0.113.42 (no CGNAT)
+[PASS] dns_hijack: compare isp vs 1.1.1.1 on www.cloudflare.com  both return 104.16.124.96;104.16.123.96
+[PASS] conn_sat: 50 parallel TCP to 1.1.1.1:443  50/50 ok in 1953ms
+[PASS] flows: 4 parallel HTTPS to speed.cloudflare.com  4/4 completed
+[PASS] speedtest: can find a server  list OK
+[PASS] tshark: 3-sec capture sanity test  captured 14348 bytes on 'Wi-Fi'
+[PASS] iperf3: 5-sec UDP to iperf.he.net  UDP burst succeeded
+[PASS] disk: free space on C:  192.3 GB free on C:
+[PASS] wifi: Get-WifiSnapshot shape  ssid=MyWifi signal=83% rx=287Mbps
+[PASS] icmp: anycast secondary (1.0.0.1)  avg=6.3ms
+[PASS] icmp: anycast secondary (8.8.4.4)  avg=5ms
+[PASS] system: arp/conn/av cmdlets  arp=7 conn=3 av=True
+[PASS] mtr: pathping sanity to 1.1.1.1 (5-cycle)  pathping wrote 1462 bytes
+[PASS] speedtest: real run (download/upload/latency)  91.1 Mbps down / 82.6 Mbps up / 5.461ms +/- 0.813ms via Local ISP (Capital City)
+=== PREFLIGHT COMPLETE  (finished: 2026-04-25T15:53:25.5643590+05:30) ===
+
+PREFLIGHT SUMMARY: 38 PASS / 0 DEGRADED / 0 FAIL

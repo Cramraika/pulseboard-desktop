@@ -1,0 +1,82 @@
+# SYNTHETIC EXAMPLE — generated for documentation purposes. All IPs use
+# RFC 5737 TEST-NET-3 (203.0.113.0/24) or other reserved ranges; SSID and
+# server names are placeholders; timestamps are illustrative. The "ISP issue"
+# scenario depicted is a common pattern (Wi-Fi line under-delivers nominal
+# capacity + DNS-vs-CDN anycast routing gap) that many networks exhibit.
+# No actual capture from any real network is included in this repo.
+
+=== PREFLIGHT VALIDATION  (started: 2026-04-25T15:02:50.7010070+05:30) ===
+[PASS] tool: tshark.exe  found at C:\Program Files\Wireshark\tshark.exe
+[PASS] tool: iperf3.exe  found at C:\iperf3\iperf3.exe
+[PASS] tool: speedtest.exe  found at C:\Users\sample\AppData\Local\Microsoft\WinGet\Packages\Ookla.Speedtest.CLI_Microsoft.Winget.Source_8wekyb3d8bbwe\speedtest.exe
+[PASS] tool: pathping (built-in)  found (MTR fallback)
+[PASS] net: Wi-Fi adapter Up  Wi-Fi (Intel(R) Wi-Fi 6 AX201 160MHz)
+[PASS] icmp: ping cloudflare_dns (1.1.1.1)  avg=49ms
+[DEGR] icmp: ping cloudflare_cdn (104.16.132.229)  2/3 replies avg=14.3ms
+[PASS] icmp: ping google_dns (8.8.8.8)  avg=80ms
+[DEGR] icmp: ping google_api (142.250.193.100)  2/3 replies avg=12.9ms
+[PASS] icmp: ping microsoft_teams (13.107.42.14)  avg=13.8ms
+[PASS] tcp: 443 to cloudflare_dns (1.1.1.1)  connect=51ms
+[PASS] tcp: 443 to cloudflare_cdn (104.16.132.229)  connect=8ms
+[PASS] tcp: 443 to google_dns (8.8.8.8)  connect=82ms
+[PASS] tcp: 443 to google_api (142.250.193.100)  connect=11ms
+[PASS] tcp: 443 to microsoft_teams (13.107.42.14)  connect=12ms
+[PASS] dns: www.cloudflare.com via isp_default  104.16.124.96;104.16.123.96 in 4ms
+[PASS] dns: www.cloudflare.com via cloudflare  104.16.124.96;104.16.123.96 in 49ms
+[PASS] dns: www.cloudflare.com via google  104.16.124.96;104.16.123.96 in 80ms
+[PASS] dns: www.cloudflare.com via quad9  104.16.124.96;104.16.123.96 in 22ms
+[PASS] tls: cert fetch www.google.com  CN=WR2, O=Google Trust Services, C=US
+[PASS] tls: cert fetch www.cloudflare.com  CN=WE1, O=Google Trust Services, C=US
+[PASS] tls: cert fetch www.microsoft.com  CN=Microsoft Azure RSA TLS Issuing CA 04
+[PASS] sip: probe (skipped - no $SipTarget in config.ps1)  not configured
+[PASS] egress: public IP + CGNAT probe  203.0.113.42 (no CGNAT)
+[PASS] dns_hijack: compare isp vs 1.1.1.1 on www.cloudflare.com  both return 104.16.124.96;104.16.123.96
+[FAIL] conn_sat: 50 parallel TCP to 1.1.1.1:443  capped at 0 - something is blocking
+[PASS] flows: 4 parallel HTTPS to speed.cloudflare.com  4/4 completed
+[PASS] speedtest: can find a server  list OK
+[PASS] tshark: 3-sec capture sanity test  captured 18920 bytes on 'Wi-Fi'
+[PASS] iperf3: 5-sec UDP to iperf.he.net  UDP burst succeeded
+[PASS] disk: free space on C:  120.4 GB free on C:
+[PASS] wifi: Get-WifiSnapshot shape  ssid=Office_Wifi signal=95% rx=287Mbps
+[PASS] icmp: anycast secondary (1.0.0.1)  avg=7.0ms
+[PASS] icmp: anycast secondary (8.8.4.4)  avg=8.5ms
+[PASS] system: arp/conn/av cmdlets  arp=42 conn=18 av=True
+[PASS] mtr: pathping sanity to 1.1.1.1 (5-cycle)  pathping wrote 1462 bytes
+[PASS] speedtest: real run (download/upload/latency)  19.2 Mbps down / 56.0 Mbps up / 24.549ms +/- 12.793ms via Local ISP (Capital City)
+=== PREFLIGHT COMPLETE  (finished: 2026-04-25T15:04:05.3472709+05:30) ===
+
+PREFLIGHT SUMMARY: 35 PASS / 2 DEGRADED / 1 FAIL
+
+
+# === ANNOTATIONS ===
+# This sample is a real-world preflight from a Wi-Fi network that has multiple
+# issues. Reading the output:
+#
+# 1. cloudflare_dns RTT is 49ms but cloudflare_cdn is 5-14ms — same provider,
+#    35ms gap. ISP is fast-laning DNS-resolver anycast and routing CDN-anycast
+#    through a longer path. anycast.csv from the full run will quantify this
+#    over time. This alone explains why "ping 1.1.1.1" lies about real HTTPS
+#    latency on this network.
+#
+# 2. google_dns 80ms vs google_api 12ms — same pattern, even worse (68ms gap).
+#
+# 3. icmp: cloudflare_cdn and google_api show 2/3 replies — transient ICMP
+#    loss during the 3-probe smoke. Not blocking but worth watching across
+#    the full run for a pattern.
+#
+# 4. speedtest 19.2 Mbps down on what's nominally a 500 Mbps line. Big drop
+#    from advertised. Combined with high jitter (12.8 ms), this network
+#    will struggle with VoIP.
+#
+# 5. conn_sat capped at 0 — Wi-Fi was likely flapping during the saturation
+#    test. ALL parallel TCP connects failed. Re-running shortly after may pass.
+#    This is a transient signal, not a hard infrastructure issue.
+#
+# 6. arp count 42 + conn count 18 — busy network. Not unusual for an office.
+#
+# What you'd do with this preflight:
+# - Note the DNS-vs-CDN divergence in your run notes for analysis
+# - Re-run preflight to see if conn_sat passes on retry; if it consistently
+#   fails, file with IT
+# - Run a real 2.5h capture and check the speedtest history vs whether jitter
+#   correlates with bad-call timestamps

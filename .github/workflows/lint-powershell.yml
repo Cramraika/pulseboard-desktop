@@ -1,0 +1,108 @@
+name: Lint PowerShell
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  psscriptanalyzer:
+    name: PSScriptAnalyzer
+    runs-on: windows-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install PSScriptAnalyzer
+        shell: pwsh
+        run: |
+          Install-Module -Name PSScriptAnalyzer -Force -Scope CurrentUser
+          Get-Module -Name PSScriptAnalyzer -ListAvailable
+
+      - name: Run PSScriptAnalyzer (Error severity blocks build)
+        shell: pwsh
+        run: |
+          $results = Invoke-ScriptAnalyzer -Path . -Recurse -Severity @('Error','Warning')
+          if ($results) {
+            $results | Format-Table -AutoSize
+          }
+          $errors = @($results | Where-Object { $_.Severity -eq 'Error' })
+          if ($errors.Count -gt 0) {
+            Write-Host "::error::Found $($errors.Count) PSScriptAnalyzer Error(s)"
+            exit 1
+          }
+          Write-Host "OK: no Error-severity findings."
+
+  ascii-only:
+    name: Pure-ASCII guard
+    runs-on: ubuntu-latest
+    timeout-minutes: 2
+    steps:
+      - uses: actions/checkout@v4
+      - name: Reject non-ASCII characters in *.ps1
+        run: |
+          set -e
+          fail=0
+          while IFS= read -r f; do
+            if LC_ALL=C grep -lP '[^\x00-\x7F]' "$f" >/dev/null 2>&1; then
+              echo "::error file=$f::Non-ASCII characters present (PowerShell 5.1 mis-decodes them under Windows-1252)."
+              LC_ALL=C grep -nP '[^\x00-\x7F]' "$f" | head -10
+              fail=1
+            fi
+          done < <(find . -name '*.ps1' -not -path './.git/*')
+          exit "$fail"
+
+  cn-token-leak-guard:
+    name: CN-internal token leak guard
+    runs-on: ubuntu-latest
+    timeout-minutes: 2
+    steps:
+      - uses: actions/checkout@v4
+      - name: Reject CN-internal-organisation references
+        # Defence-in-depth: this repo was extracted from a CN-internal source.
+        # We block tokens that identify the source organisation specifically.
+        # We do NOT block public-provider names (Tata Smartflo / TTBS is a public
+        # commercial VoIP product anyone can buy; its IP range 14.97.20.0/24 is
+        # publicly documented by Tata) — those are legitimate provider-profile
+        # entries in docs/VOIP_PROVIDERS.md and config.example.ps1.
+        #
+        # Excluded from scan:
+        #   - .git/                        (history)
+        #   - lint-powershell.yml          (this file lists the tokens)
+        #   - CLAUDE.md                    (maintainer history doc references the policy)
+        #   - docs/TROUBLESHOOTING.md      (documents the CI guard itself)
+        run: |
+          set -e
+          # Block tokens (organisation-identifying):
+          needles="codingninjas @codingninjas NetworkMonitorCN"
+          # Block specific CN-internal IPs (egress + gateways):
+          needles_ip="49.249.153.250 172.16.24.1 172.16.16.1"
+          fail=0
+          for n in $needles $needles_ip; do
+            matches=$(grep -rIn \
+              --exclude-dir=.git \
+              --exclude=lint-powershell.yml \
+              --exclude=CLAUDE.md \
+              --exclude=TROUBLESHOOTING.md \
+              -F "$n" . 2>/dev/null || true)
+            if [ -n "$matches" ]; then
+              echo "::error::Found CN-organisation token '$n' in repo content:"
+              echo "$matches"
+              fail=1
+            fi
+          done
+          # Also block "Coding Ninjas" with space (case-insensitive)
+          matches=$(grep -rIni \
+            --exclude-dir=.git \
+            --exclude=lint-powershell.yml \
+            --exclude=CLAUDE.md \
+            --exclude=TROUBLESHOOTING.md \
+            "coding ninjas" . 2>/dev/null || true)
+          if [ -n "$matches" ]; then
+            echo "::error::Found 'Coding Ninjas' (case-insensitive) in repo content:"
+            echo "$matches"
+            fail=1
+          fi
+          exit "$fail"
