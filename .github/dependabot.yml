@@ -1,9 +1,16 @@
-# Dependabot config — OW-216 P5 (Snyk fleet dep-debt campaign)
-# Activated 2026-05-30. Repo is pure PowerShell — no native PowerShell-module
-# ecosystem in Dependabot; only github-actions is scannable.
 version: 2
 updates:
+  # PowerShell is not a Dependabot package-ecosystem. We only track GitHub
+  # Actions versions automatically; tool versions (Wireshark, iperf3, Npcap)
+  # are pinned in install.ps1 and reviewed manually on release.
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
-      interval: "monthly"
+      interval: "weekly"
+      day: "monday"
+      time: "03:00"
+      timezone: "Asia/Kolkata"
+    open-pull-requests-limit: 5
+    labels:
+      - "dependencies"
+      - "github-actions"
