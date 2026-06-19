@@ -39,3 +39,13 @@ desktop.ini
 .vscode/
 .idea/
 *.iml
+.gitnexus
+
+# graphify outputs (per universal-claudemd v21 §44)
+graphify-out/
+
+# CC tooling output dirs / configs
+.cgcignore
+.gitnexusignore
+.serena/
+lychee.toml
