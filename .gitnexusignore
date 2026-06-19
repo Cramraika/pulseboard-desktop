@@ -1,0 +1,26 @@
+# Default ignore patterns (added 2026-05-05 v19 verification)
+node_modules/
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+venv/
+env/
+.env
+.next/
+.nuxt/
+dist/
+build/
+target/
+vendor/
+.cache/
+.tox/
+.pytest_cache/
+.mypy_cache/
+graphify-out/
+.code-graph-rag/
+.gitnexus/
+*.log
+.DS_Store
+.idea/
+.vscode/
