@@ -15,14 +15,17 @@ These cluster playbooks apply to this repo. You do NOT know their contents from 
 NOT inlined and NOT @-imported; the always-load GUARDRAILs below are the only parts that must
 hold without a Read.
 
-- `commercial-bound.md` — when: license / sponsor-readiness / graph-tool-output / white-label work. GUARDRAIL: never commit/ship GitNexus (PolyForm-NC) graph output from a commercial-bound repo — CGC is the canonical graph source.
 - `brand-registry.md` — when: brand / positioning / brand-canon / cross-repo brand work.
 - `pulseboard-cluster.md` — when: Pulseboard Android/Windows cross-repo work (v1-stub).
 
 <!-- END PLAYBOOKS BLOCK -->
 
-## License classification: commercial-bound
-Per §50.2: GitNexus may be used for read-only investigation; GitNexus output (wikis, indexed JSON exports, derivatives) MUST NOT be committed/shipped. Use CodeGraphContext (MIT) for any derivative artifact that may be redistributed.
+## License classification: free-OSS (MIT)
+Per fleet licensing-policy (`platform-docs/02-governance/licensing-policy.md`, ratified 2026-06-22):
+pulseboard is a **free OSS utility → MIT**. LICENSE is MIT (`© 2026 Vagary Labs` brand form),
+README states MIT, `.github/FUNDING.yml` + README Support section carry the tips/sponsorship surface,
+`CONTRIBUTING.md` is the PR-acceptor note. Per §50.2: GitNexus output may be used freely
+(PolyForm-NC OK for personal/internal use).
 
 ## Cluster: Pulseboard
 Member of §45 cross-repo cluster `Pulseboard`. Siblings: `pulseboard`. Cross-repo orientation via `graphify merge-graphs` after per-repo `/graphify .`; cross-repo CALLS via `gitnexus group sync Pulseboard` after per-repo `gitnexus analyze`.
