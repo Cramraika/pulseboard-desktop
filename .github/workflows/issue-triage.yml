@@ -7,6 +7,6 @@ permissions:
   issues: write
 jobs:
   triage:
-    uses: vagarylabs/.github/.github/workflows/issue-triage.yml@main
+    uses: vagarylabs/.github/.github/workflows/issue-triage.yml@76604b1ea360a742091777f25179cda04e6956eb # main
     with:
       assignees: ${{ vars.ISSUE_TRIAGE_ASSIGNEES }}
